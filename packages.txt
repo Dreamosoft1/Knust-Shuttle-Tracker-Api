@@ -1,0 +1,10 @@
+django
+django-cors-headers
+django-dotenv
+djangorestframework
+dj-rest-auth
+django-allauth
+djangorestframework-simplejwt
+psycopg
+websockets
+corsheaders
