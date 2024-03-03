@@ -1,4 +1,4 @@
-import websocket
+import websockets
 import json
 import random
 # Replace 'your_server_address' with your actual server address
