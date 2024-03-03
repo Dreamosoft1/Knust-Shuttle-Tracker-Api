@@ -3,8 +3,10 @@ from django.contrib.auth.models import AbstractUser, Group, Permission, BaseUser
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
+from django.contrib.auth.models import BaseUserManager
+
 class MyAccountManager(BaseUserManager):
-    def create_user(self, username, email, first_name, last_name, phone_number, password=None):
+    def create_user(self, email, username, first_name, last_name, phone_number, password=None, **extra_fields):
         if not email:
             raise ValueError('User must have an email address')
         
@@ -12,17 +14,24 @@ class MyAccountManager(BaseUserManager):
             raise ValueError('User must have a username')
         
         user = self.model(
-            email = self.normalize_email(email),
-            username = username,
-            phone_number = phone_number,
-            first_name = first_name,
-            last_name = last_name,
+            email=self.normalize_email(email),
+            username=username,
+            phone_number=phone_number,
+            first_name=first_name,
+            last_name=last_name,
+            **extra_fields
         )
         
-        user.is_active = True
         user.set_password(password)
         user.save(using=self._db)
         return user
+    
+    def create_superuser(self, email, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(email, username, password=password, **extra_fields)
+
 
 class User(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -34,11 +43,7 @@ class User(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-
-        return self.create_user(email, password, **extra_fields)
+    
     
     
 class User(AbstractUser):
