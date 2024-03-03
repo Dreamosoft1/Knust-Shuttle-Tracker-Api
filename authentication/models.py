@@ -3,6 +3,26 @@ from django.contrib.auth.models import AbstractUser, Group, Permission, BaseUser
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
+class MyAccountManager(BaseUserManager):
+    def create_user(self, username, email, first_name, last_name, phone_number, password=None):
+        if not email:
+            raise ValueError('User must have an email address')
+        
+        if not username:
+            raise ValueError('User must have a username')
+        
+        user = self.model(
+            email = self.normalize_email(email),
+            username = username,
+            phone_number = phone_number,
+            first_name = first_name,
+            last_name = last_name,
+        )
+        
+        user.is_active = True
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 class User(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -24,11 +44,11 @@ class User(BaseUserManager):
 class User(AbstractUser):
     email = models.EmailField(("email address"), unique=True)
     phone_number = models.CharField(max_length=17, blank=True, null=True)
-    student_number = models.CharField(max_length=19, blank=True, null=True)
     groups = models.ManyToManyField(Group, related_name='custom_user_set')
     user_permissions = models.ManyToManyField(Permission, related_name='custom_user_set')
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name','phone_number']
+    objects = MyAccountManager()
     
 
 class User_Profile(models.Model):
