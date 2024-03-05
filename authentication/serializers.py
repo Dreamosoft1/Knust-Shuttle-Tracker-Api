@@ -23,12 +23,12 @@ class UserSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(validators=[phone_regex], max_length=17, required=False)
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'phone_number', 'username', 'id']
+        fields = ['first_name', 'last_name', 'email', 'username', 'id']
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username','password', 'email', 'phone_number','first_name', 'last_name')
+        fields = ('username','password', 'email',)
         extra_kwargs = {'password': {'write_only': True}}
     
     def create(self, validated_data):
@@ -55,4 +55,4 @@ class FullUserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['id','first_name', 'last_name', 'email', 'phone_number', 'profile', 'username']
+        fields = ['id','first_name', 'last_name', 'email', 'profile', 'username']
