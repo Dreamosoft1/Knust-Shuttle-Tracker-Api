@@ -25,13 +25,13 @@ class MyAccountManager(BaseUserManager):
 
 class User(AbstractUser):
     email = models.EmailField(("email address"), unique=True)
-    full_name = models.CharField(max_length=150)
+    full_name = models.CharField(max_length=150, default="Default Name")
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['full_name']
 
     objects = MyAccountManager()
 
-class UserProfile(models.Model):
+class User_Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="media/profile", default='static/images/profile.svg', blank=True, null=True)
 
@@ -41,4 +41,4 @@ class UserProfile(models.Model):
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created and not hasattr(instance, 'userprofile'):
-        UserProfile.objects.create(user=instance)
+        User_Profile.objects.create(user=instance)

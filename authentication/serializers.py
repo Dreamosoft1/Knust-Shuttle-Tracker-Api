@@ -8,7 +8,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(max_length=None, use_url=True)
 
     class Meta:
-        model = UserProfile
+        model = User_Profile
         fields = ['image']
 
 class UserSerializer(serializers.ModelSerializer):
