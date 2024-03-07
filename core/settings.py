@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "lostfound",
     "trip",
     "vehicle",
-    'bus_tracking',
     #Third Party Apps
     "rest_framework",
     "rest_framework.authtoken",
