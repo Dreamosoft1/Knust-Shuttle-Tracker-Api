@@ -8,7 +8,7 @@ urlpatterns = [
     #path("trip/", include("trip.urls")),
     path("driver/", include("vehicle.urls")),
     #path("lostfound/", include("lostfound.urls")),
-    path('bus_tracking/', include('bus_tracking.urls')),
+    
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
