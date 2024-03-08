@@ -8,7 +8,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(max_length=None, use_url=True)
 
     class Meta:
-        model = UserProfile
+        model = User_Profile
         fields = ['image']
 
 class UserSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(validators=[phone_regex], max_length=17, required=False)
     class Meta:
         model = User
-        fields = ('username', 'full_name', 'email', 'phone_number')
+        fields = ['first_name', 'last_name', 'email', 'username', 'id']
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:

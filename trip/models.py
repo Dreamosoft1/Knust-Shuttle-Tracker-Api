@@ -5,8 +5,8 @@ from vehicle.models import Driver
 # Create your models here.
 class Trip_Request(models.Model):
     status_choices = (1, 'Pending'), (2, 'Accepted'), (3, 'Rejected')
-    users = models.ManyToManyField(User)
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='driver')
+    users = models.ManyToManyField(User, related_name='users', blank=True)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='driver', null=True, blank=True)
     start_point = models.CharField(max_length=100)
     end_point = models.CharField(max_length=100)
     date = models.DateField()

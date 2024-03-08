@@ -37,9 +37,10 @@ class TripConsumer(AsyncWebsocketConsumer):
             trip_request.joined_users.clear()
             trip_request.status = 2
             trip_request.save()
-            return self.send_notification_to_drivers(trip_request_id)
-        else:
+            self.send_notification_to_drivers(trip_request_id)
             return trip_request
+        
+        return trip_request
 
     @database_sync_to_async
     def send_notification_to_drivers(self, trip_request_id):
