@@ -18,7 +18,7 @@ class Driver(models.Model):
     name = models.CharField(max_length=50)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='drivers')
     image = models.ImageField(upload_to='driver_images', blank=True, null=True)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    latitude = models.CharField(max_length=50)
+    longitude = models.CharField(max_length=50)
     def __str__(self):
         return self.name

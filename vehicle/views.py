@@ -34,8 +34,8 @@ class DriverDetailView(generics.ListAPIView):
     serializer_class = DriverSerializer
     permission_classes = (permissions.IsAuthenticated,)
     def get_queryset(self):
-        long = float(self.kwargs['long'])
-        lat = float(self.kwargs['lat'])
+        long = self.kwargs['long']
+        lat = self.kwargs['lat']
         return Driver.objects.filter(longitude__range=(long-0.1, long+0.1), latitude__range=(lat-0.1, lat+0.1))
 
 class VehicleUpdateView(generics.UpdateAPIView):
