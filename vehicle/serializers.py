@@ -16,4 +16,4 @@ class DriverSerializer(serializers.ModelSerializer):
     vehicle = VehicleSerializer(read_only=True)
     class Meta:
         model = Driver
-        fields = '__all__'
+        fields = ['name', 'image', 'number', 'driver_id', 'date_of_birth','gender','vehicle']

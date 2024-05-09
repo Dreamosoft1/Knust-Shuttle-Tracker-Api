@@ -8,7 +8,17 @@ class Stop(models.Model):
         return self.name
 
 class Vehicle(models.Model):
-    vehicle_number = models.CharField(max_length=50)
+    vehicle_number = models.CharField(max_length=50, unique=True)
+    max_power = models.CharField(max_length=50)
+    fuel_type = models.CharField(max_length=50)
+    max_speed = models.CharField(max_length=50)
+    zero_to_sixty = models.CharField(max_length=50)
+    model = models.CharField(max_length=50)
+    color = models.CharField(max_length=50)
+    gear_type = models.CharField(max_length=50)
+    fuel_consumption = models.CharField(max_length=50)
+    image = models.ImageField(upload_to='vehicle_images', blank=True, null=True)
+    start = models.ManyToManyField(Stop, related_name='start',blank=True)
     stop = models.ManyToManyField(Stop, related_name='stops',blank=True)
     def __str__(self):
         return self.vehicle_number
@@ -16,10 +26,18 @@ class Vehicle(models.Model):
 class Driver(models.Model):
     user = models.OneToOneField('authentication.User', on_delete=models.CASCADE, related_name='driver')
     name = models.CharField(max_length=50)
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='drivers')
+    date_of_birth = models.DateField()
+    gender = models.CharField(max_length=50)
+    vehicle = models.ManyToManyField(Vehicle, related_name='vehicle',blank=True)
     image = models.ImageField(upload_to='driver_images', blank=True, null=True)
-    latitude = models.CharField(max_length=50)
-    longitude = models.CharField(max_length=50)
+    latitude = models.CharField(max_length=50, default="0")
+    number = models.CharField(max_length=50)
+    longitude = models.CharField(max_length=50, default="0")
     driver_id = models.CharField(max_length=50)
     def __str__(self):
         return self.name
+
+class Driver_ID(models.Model):
+    driver_id = models.CharField(max_length=50)
+    def __str__(self):
+        return self.driver_id

@@ -17,7 +17,6 @@ class DriverCreateView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.vehicle = Vehicle.objects.create(vehicle_number="GR-xxxx-24")
         username = serializer.validated_data['name'] + str(random.randint(1, 1000))
         user = User.objects.create_user(username=username, email=username+"@st.knust.edu.gh", first_name=serializer.validated_data['name'], last_name="Driver", phone_number="599999999", password="defaultpassword")
         login(request, user)
