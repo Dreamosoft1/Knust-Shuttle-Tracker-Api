@@ -23,9 +23,20 @@ class MyAccountManager(BaseUserManager):
 
         return self.create_user(email, full_name, password=password, **extra_fields)
 
+class location(models.Model):
+    title = models.CharField(max_length=50)
+    icon = models.CharField(max_length=50)
+    latitude = models.CharField(max_length=50)
+    longitude = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.latitude + " " + self.longitude
+
 class User(AbstractUser):
     email = models.EmailField(("email address"), unique=True)
     full_name = models.CharField(max_length=150, default="Default Name")
+    latitude = models.CharField(max_length=50, default="0")
+    longitude = models.CharField(max_length=50, default="0")
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['full_name']
 
@@ -34,9 +45,11 @@ class User(AbstractUser):
 class User_Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="media/profile", default='static/images/profile.svg', blank=True, null=True)
-
+    favorite_location = models.ManyToManyField(location, related_name='favorite_location', blank=True)
     def __str__(self):
         return self.user.full_name
+
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

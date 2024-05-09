@@ -20,5 +20,6 @@ class Driver(models.Model):
     image = models.ImageField(upload_to='driver_images', blank=True, null=True)
     latitude = models.CharField(max_length=50)
     longitude = models.CharField(max_length=50)
+    driver_id = models.CharField(max_length=50)
     def __str__(self):
         return self.name
