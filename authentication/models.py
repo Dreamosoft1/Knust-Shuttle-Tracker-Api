@@ -43,28 +43,6 @@ class User(BaseUserManager):
         user.save(using=self._db)
         return user
 
-<<<<<<< HEAD
-    def create_superuser(self, email, full_name, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-
-        return self.create_user(email, full_name, password=password, **extra_fields)
-
-class location(models.Model):
-    title = models.CharField(max_length=50)
-    icon = models.CharField(max_length=50)
-    latitude = models.CharField(max_length=50)
-    longitude = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.latitude + " " + self.longitude
-
-class User(AbstractUser):
-    email = models.EmailField(("email address"), unique=True)
-    full_name = models.CharField(max_length=150, default="Default Name")
-    latitude = models.CharField(max_length=50, default="0")
-    longitude = models.CharField(max_length=50, default="0")
-=======
     
     
     
@@ -73,7 +51,6 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=17, blank=True, null=True)
     groups = models.ManyToManyField(Group, related_name='custom_user_set')
     user_permissions = models.ManyToManyField(Permission, related_name='custom_user_set')
->>>>>>> 98af928bb2d038c90054482f1e354ee363899ce6
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name','phone_number']
     objects = MyAccountManager()
@@ -82,11 +59,7 @@ class User(AbstractUser):
 class User_Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="media/profile", default='static/images/profile.svg', blank=True, null=True)
-<<<<<<< HEAD
-    favorite_location = models.ManyToManyField(location, related_name='favorite_location', blank=True)
-=======
    
->>>>>>> 98af928bb2d038c90054482f1e354ee363899ce6
     def __str__(self):
         return self.user.username
 
@@ -94,10 +67,5 @@ class User_Profile(models.Model):
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-<<<<<<< HEAD
-    if created and not hasattr(instance, 'userprofile'):
-        User_Profile.objects.create(user=instance)
-=======
     if created and not hasattr(instance, 'UserProfile'):
         User_Profile.objects.create(user=instance)
->>>>>>> 98af928bb2d038c90054482f1e354ee363899ce6
