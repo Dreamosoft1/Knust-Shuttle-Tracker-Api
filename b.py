@@ -26,7 +26,7 @@ def on_close(ws, close_status_code, close_msg):
     print("WebSocket disconnected")
 
 # Create a WebSocket instance
-ws = websocket.WebSocketApp(socket_url, on_open=on_open, on_message=on_message, on_close=on_close)
+ws = websockets.WebSocketApp(socket_url, on_open=on_open, on_message=on_message, on_close=on_close)
 
 # Run the WebSocket connection
 ws.run_forever()
