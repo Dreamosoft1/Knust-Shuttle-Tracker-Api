@@ -4,29 +4,33 @@ import random
 from .permissions import IsDriver
 from rest_framework.authtoken.models import Token
 from authentication.models import User
-from .serializers import VehicleSerializer, DriverSerializer
+from .serializers import VehicleSerializer, DriverSerializer, DriverCreateSerializer
 from .exceptions import ExternalAPIError
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from django.contrib.auth import login
+from django.contrib.auth import authenticate
 class DriverCreateView(generics.CreateAPIView):
     queryset = Driver.objects.all()
-    serializer_class = DriverSerializer
-    permission_classes = (permissions.AllowAny,)
+    serializer_class = DriverCreateSerializer
+    permission_classes = (permissions.IsAdminUser,)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data['name'] + str(random.randint(1, 1000))
-        user = User.objects.create_user(username=username, email=username+"@st.knust.edu.gh", first_name=serializer.validated_data['name'], last_name="Driver", phone_number="599999999", password="defaultpassword")
-        login(request, user)
+        email = username + "@st.knust.edu.gh"
+        user = User.objects.create_user(username=username, email=username+email, full_name=serializer.validated_data['name'], last_name="Driver", password="defaultpassword")
         token, _ = Token.objects.get_or_create(user=user)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response({"data":serializer.data,"token":token.key}, status=status.HTTP_201_CREATED, headers=headers)
     
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user, vehicle=self.vehicle)
+        vehicle_id = self.request.data['vehicle']
+        vehicle = Vehicle.objects.get(id=vehicle_id)
+        driver_instance = serializer.save(user=self.request.user)
+        driver_instance.vehicle.add(vehicle)  # Assuming 'vehicle' is a many-to-many field in the Driver model
 
 class DriverDetailView(generics.ListAPIView):
     queryset = Driver.objects.all()

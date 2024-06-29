@@ -16,4 +16,10 @@ class DriverSerializer(serializers.ModelSerializer):
     vehicle = VehicleSerializer(read_only=True)
     class Meta:
         model = Driver
-        fields = ['name', 'image', 'number', 'driver_id', 'date_of_birth','gender','vehicle']
+        fields = ['id','name', 'image', 'number', 'driver_id', 'date_of_birth','gender','vehicle']
+
+class DriverCreateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    class Meta:
+        model = Driver
+        fields = ['id','name', 'image', 'number', 'driver_id', 'date_of_birth', 'gender','vehicle']
