@@ -21,8 +21,6 @@ class DriverCreateView(generics.CreateAPIView):
         username = serializer.validated_data['name'] + str(random.randint(1, 1000))
         email = username + "@st.knust.edu.gh"
         user = User.objects.create_user(username=username, email=username+email, full_name=serializer.validated_data['name'], last_name="Driver", password="defaultpassword")
-        driver = authenticate(username=email, password="defaultpassword")
-        login(request, driver)
         token, _ = Token.objects.get_or_create(user=user)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
