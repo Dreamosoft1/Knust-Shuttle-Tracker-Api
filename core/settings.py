@@ -50,6 +50,7 @@ REST_FRAMEWORK = {
     # ... other DRF settings
 }
 
+CSRF_TRUSTED_ORIGINS = ['https://knust-shuttle-tracker-api.onrender.com','https://192.168.43.142:8081']
 
 # Application definition
 
