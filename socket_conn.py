@@ -5,7 +5,7 @@ import time
 import threading
 
 # Replace 'your_server_address' with your actual server address
-socket_url = 'ws://127.0.0.1:8000/ws/vehicle_location/'
+socket_url = 'wss://knust-shuttle-tracker-api.onrender.com/ws/vehicle_location/'
 
 def on_open(ws):
     def run(*args):
