@@ -64,7 +64,9 @@ class DriverUpdateView(generics.UpdateAPIView):
             instance.vehicle.set(vehicles)
     
         self.perform_update(serializer)
-        return Response({"data": serializer.data, "message": message})
+        if message:
+            return Response({"data": serializer.data, "message": message})
+        return Response(serializer.data)
     
     def perform_update(self, serializer):
         try:
