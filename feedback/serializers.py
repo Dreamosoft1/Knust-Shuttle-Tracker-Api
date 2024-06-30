@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import Trip_Request
+from .models import Feedback
 
-class TripSerializer(serializers.ModelSerializer):
+class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Trip_Request
+        model = Feedback
         fields = '__all__'

@@ -48,7 +48,6 @@ class User(BaseUserManager):
     
 class User(AbstractUser):
     email = models.EmailField(("email address"), unique=True)
-    phone_number = models.CharField(max_length=17, blank=True, null=True)
     groups = models.ManyToManyField(Group, related_name='custom_user_set')
     user_permissions = models.ManyToManyField(Permission, related_name='custom_user_set')
     USERNAME_FIELD = 'email'
