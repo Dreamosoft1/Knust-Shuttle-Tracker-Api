@@ -48,10 +48,12 @@ class User(BaseUserManager):
     
 class User(AbstractUser):
     email = models.EmailField(("email address"), unique=True)
-    groups = models.ManyToManyField(Group, related_name='custom_user_set')
-    user_permissions = models.ManyToManyField(Permission, related_name='custom_user_set')
+    full_name = models.CharField(max_length=150, default="Default Name")
+    latitude = models.CharField(max_length=50, default="0")
+    longitude = models.CharField(max_length=50, default="0")
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name','phone_number']
+    REQUIRED_FIELDS = ['full_name']
+
     objects = MyAccountManager()
     
 
