@@ -35,7 +35,7 @@ class DriverCreateView(generics.CreateAPIView):
         # Pass the newly created user to perform_create
         self.perform_create(serializer, user=user)
         headers = self.get_success_headers(serializer.data)
-        return Response({"data": serializer.data, "token": token.key}, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({"data": serializer.data, "token": token.key,"user_id":user.pk}, status=status.HTTP_201_CREATED, headers=headers)
     
     def perform_create(self, serializer, user):
         # Save the driver instance with the correct user
