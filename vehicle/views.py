@@ -124,7 +124,7 @@ class DriverLoginView(generics.CreateAPIView):
                 return Response({"message":"Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
             login(request, ur)
             token, _ = Token.objects.get_or_create(user=driver.user)
-            return Response({"data":serializer.data,"token":token.key}, status=status.HTTP_200_OK)
+            return Response({"data":serializer.data,"token":token.key,"id":driver.pk}, status=status.HTTP_200_OK)
         except Driver.DoesNotExist:
             return Response({"message":"Driver not found"}, status=status.HTTP_404_NOT_FOUND)
 
