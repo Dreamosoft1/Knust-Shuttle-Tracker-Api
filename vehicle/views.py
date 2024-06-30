@@ -7,7 +7,7 @@ import requests
 from .permissions import IsDriver
 from rest_framework.authtoken.models import Token
 from authentication.models import User
-from .serializers import VehicleSerializer, DriverSerializer, DriverCreateSerializer, DriverOtpVerificationSerializer, DriverUpdateSerializer
+from .serializers import VehicleSerializer, DriverSerializer, DriverCreateSerializer, DriverOtpVerificationSerializer, DriverUpdateSerializer, DriverLoginSerializer
 from .exceptions import ExternalAPIError
 from rest_framework import permissions, status
 from rest_framework.response import Response
@@ -110,7 +110,7 @@ class DriverOtpVerification(generics.CreateAPIView):
 
 class DriverLoginView(generics.CreateAPIView):
     queryset = Driver.objects.all()
-    serializer_class = DriverCreateSerializer
+    serializer_class = DriverLoginSerializer
     permission_classes = (permissions.AllowAny,)
 
     def create(self, request, *args, **kwargs):
