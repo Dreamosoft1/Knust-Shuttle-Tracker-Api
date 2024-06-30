@@ -93,8 +93,8 @@ class DriverOtpVerification(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         
         code = serializer.validated_data.get('code')
-        user_id = serializer.validated_data.get('driver_id')
-        phone = Driver.objects.get(user__pk=user_id).number
+        driver_id = serializer.validated_data.get('driver_id')
+        phone = Driver.objects.get(driver_id=driver_id).number
         data = {
             "code": code,
             "number": phone,

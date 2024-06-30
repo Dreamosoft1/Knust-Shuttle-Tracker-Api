@@ -15,10 +15,10 @@ def on_open(ws):
             longitude = random.uniform(-122.4194, 122.4184)
             # Your JSON payload
             payload = {
-                "driver_id": 1,
+                "driver_id": 2,
                 "lat": latitude,
                 "long": longitude,
-                "user_id": 3  # Add this line to include user_id
+                "user_id": 6  # Add this line to include user_id
             }
             # Sending the JSON payload as a string
             ws.send(json.dumps(payload))

@@ -43,7 +43,7 @@ class DriverUpdateSerializer(serializers.ModelSerializer):
 
 class DriverOtpVerificationSerializer(serializers.Serializer):
     code = serializers.CharField()
-    user_id = serializers.CharField()
+    driver_id = serializers.CharField()
 
 class DriverLoginSerializer(serializers.Serializer):
     driver_id = serializers.CharField()
