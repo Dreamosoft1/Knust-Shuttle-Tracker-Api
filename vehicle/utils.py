@@ -9,7 +9,7 @@ def send_otp(name, phone_number):
         'medium': 'sms',
         'message': message+' This is your verification code:\n%otp_code%\nPlease do not share this code with anyone.',
         'number': phone_number,
-        'sender_id': 'ShtleTrckr',
+        'sender_id': 'ShuttleHub',
         'type': 'numeric',
     }
 
