@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, User_Profile, location
+from .models import User, User_Profile
 # Register your models here.
 class User_ProfileInline(admin.StackedInline):
     model = User_Profile
@@ -9,4 +9,4 @@ class UserAdmin(admin.ModelAdmin):
     inlines = [User_ProfileInline]
 
 admin.site.register(User, UserAdmin)
-admin.site.register(location)
+#admin.site.register(location)
