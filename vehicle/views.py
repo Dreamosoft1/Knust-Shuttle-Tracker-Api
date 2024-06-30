@@ -55,6 +55,7 @@ class DriverUpdateView(generics.UpdateAPIView):
         # Check and send OTP if 'number' field is present and not empty
         if 'number' in request.data and request.data['number']:
             message = send_otp(instance.name, request.data['number'])
+            self.perform_update(serializer)
             return Response({"data": serializer.data, "message": message})
        
         # Handle the many-to-many relationship for the 'vehicle' field
