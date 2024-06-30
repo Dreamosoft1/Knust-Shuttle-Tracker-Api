@@ -24,15 +24,22 @@ class DriverCreateView(generics.CreateAPIView):
         username = serializer.validated_data['name'] + str(random.randint(1, 1000)).replace(" ", "")
         email = username + "@st.knust.edu.gh"
         password = serializer.validated_data['password']
-        user = User.objects.create_user(username=username, email=email, full_name=serializer.validated_data['name'], last_name="Driver", password=password)
+        full_name = serializer.validated_data['name']
+        # Create a new user for the driver
+        user = User.objects.create_user(username=username, email=email, password=password, full_name=full_name)
+        user.last_name = "Driver"
+        user.save()
+        
         token, _ = Token.objects.get_or_create(user=user)
-        self.perform_create(serializer)
+        
+        # Pass the newly created user to perform_create
+        self.perform_create(serializer, user=user)
         headers = self.get_success_headers(serializer.data)
-        return Response({"data":serializer.data,"token":token.key}, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({"data": serializer.data, "token": token.key}, status=status.HTTP_201_CREATED, headers=headers)
     
-    def perform_create(self, serializer):
-        driver_instance = serializer.save(user=self.request.user)
-        driver_instance.save()
+    def perform_create(self, serializer, user):
+        # Save the driver instance with the correct user
+        serializer.save(user=user)
 
 class DriverUpdateView(generics.UpdateAPIView):
     queryset = Driver.objects.all()
