@@ -20,6 +20,20 @@ class DriverSerializer(serializers.ModelSerializer):
 
 class DriverCreateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
+    password = serializers.CharField(write_only=True)
     class Meta:
         model = Driver
-        fields = ['id','name', 'image', 'number', 'driver_id', 'date_of_birth', 'gender','vehicle']
+        fields = ['id','name', 'driver_id', 'password']
+
+class DriverUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Driver
+        fields = ['number', 'image', 'gender', 'date_of_birth','vehicle']
+
+class DriverOtpVerificationSerializer(serializers.Serializer):
+    code = serializers.CharField()
+    user_id = serializers.CharField()
+
+class DriverLoginSerializer(serializers.Serializer):
+    driver_id = serializers.CharField()
+    password = serializers.CharField(write_only=True)

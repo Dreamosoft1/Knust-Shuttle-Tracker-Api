@@ -67,9 +67,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     #Local Apps
     "authentication",
-    "lostfound",
-    "trip",
     "vehicle",
+    "feedback",
     #Third Party Apps
     "rest_framework",
     "rest_framework.authtoken",

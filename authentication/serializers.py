@@ -56,3 +56,10 @@ class FullUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id','full_name', 'email', 'profile', 'username']
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer(source='user_profile')
+    
+    class Meta:
+        model = User
+        fields = ['full_name', 'profile']
