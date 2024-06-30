@@ -19,7 +19,7 @@ def send_otp(name, phone_number):
 
     url = 'https://sms.arkesel.com/api/otp/generate'
     response = requests.post(url, json=data, headers=headers)
-    if response == 200:
+    if response.status_code == 200:
         return "OTP sent successfully"
     else:
         r = response.json()

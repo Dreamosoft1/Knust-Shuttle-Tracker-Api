@@ -94,7 +94,7 @@ class DriverOtpVerification(generics.CreateAPIView):
         
         code = serializer.validated_data.get('code')
         user_id = serializer.validated_data.get('driver_id')
-        phone = Driver.objects.get(pk=user_id).number
+        phone = Driver.objects.get(user__pk=user_id).number
         data = {
             "code": code,
             "number": phone,
@@ -134,7 +134,7 @@ class DriverLoginView(generics.CreateAPIView):
                 return Response({"message":"Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
             login(request, ur)
             token, _ = Token.objects.get_or_create(user=driver.user)
-            return Response({"data":serializer.data,"token":token.key,"id":driver.pk}, status=status.HTTP_200_OK)
+            return Response({"data":serializer.data,"token":token.key,"id":driver.pk,"user_id":user.pk}, status=status.HTTP_200_OK)
         except Driver.DoesNotExist:
             return Response({"message":"Driver not found"}, status=status.HTTP_404_NOT_FOUND)
 

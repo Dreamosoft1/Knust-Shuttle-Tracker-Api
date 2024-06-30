@@ -21,7 +21,6 @@ class DriverSerializer(serializers.ModelSerializer):
         model = Driver
         fields = ['id','name', 'image', 'number', 'driver_id', 'date_of_birth','gender','vehicle','user_id']
 
-
 class DriverCreateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     password = serializers.CharField(write_only=True)
@@ -35,7 +34,6 @@ class DriverCreateSerializer(serializers.ModelSerializer):
         driver_instance = Driver.objects.create(**validated_data)
         # If you need to handle password, ensure the corresponding User is created or updated
         return driver_instance
-
 
 class DriverUpdateSerializer(serializers.ModelSerializer):
     user_id = serializers.CharField(source='user.pk', read_only=True)
