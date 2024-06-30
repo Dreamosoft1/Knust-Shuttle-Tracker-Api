@@ -55,8 +55,8 @@ class DriverUpdateView(generics.UpdateAPIView):
         # Check and send OTP if 'number' field is present and not empty
         if 'number' in request.data and request.data['number']:
             message = send_otp(instance.name, request.data['number'])
+            return Response({"data": serializer.data, "message": message})
        
-        
         # Handle the many-to-many relationship for the 'vehicle' field
         if 'vehicle' in request.data:
             vehicle_ids = request.data.get('vehicle')
@@ -64,8 +64,6 @@ class DriverUpdateView(generics.UpdateAPIView):
             instance.vehicle.set(vehicles)
     
         self.perform_update(serializer)
-        if message:
-            return Response({"data": serializer.data, "message": message})
         return Response(serializer.data)
     
     def perform_update(self, serializer):
