@@ -52,14 +52,23 @@ class DriverUpdateView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.driver = Driver.objects.get(id=instance.id)
-        if 'number' in request.data and request.data['number'] != None:
-            message=send_otp(self.driver.name, request.data['number'])
+        # Check and send OTP if 'number' field is present and not empty
+        if 'number' in request.data and request.data['number']:
+            message = send_otp(instance.name, request.data['number'])
+       
+        
+        # Handle the many-to-many relationship for the 'vehicle' field
+        if 'vehicle' in request.data:
+            vehicle_ids = request.data.get('vehicle')
+            vehicles = Vehicle.objects.filter(id__in=vehicle_ids)
+            instance.vehicle.set(vehicles)
+    
         self.perform_update(serializer)
-        return Response({"data":serializer.data,"message":message})
+        return Response({"data": serializer.data, "message": message})
     
     def perform_update(self, serializer):
         try:
-            driver = Driver.objects.get(user=self.request.user, id=self.driver.id)
+            driver = Driver.objects.get(user=self.request.user, id=self.kwargs['id'])
             serializer.save(driver=driver)
         except Driver.DoesNotExist:
             raise ExternalAPIError("You are not authorized to update this driver")
