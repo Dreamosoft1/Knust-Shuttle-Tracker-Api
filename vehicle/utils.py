@@ -2,7 +2,7 @@ import requests
 import os
 
 def send_otp(name, phone_number):
-    message = f"Hello {name}, Welcome to Vendyi."
+    message = f"Hello Mr/Mrs.{name}, Welcome to Shuttle Hub."
     data = {
         'expiry': 5,
         'length': 6,
