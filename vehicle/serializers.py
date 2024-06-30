@@ -9,6 +9,7 @@ class StopSerializer(serializers.ModelSerializer):
 
 class VehicleSerializer(serializers.ModelSerializer):
     stop = StopSerializer(many=True, read_only=True)
+    start = StopSerializer(many=True,read_only=True)
     class Meta:
         model = Vehicle
         fields = '__all__'
