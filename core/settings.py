@@ -56,9 +56,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     #Local Apps
     "authentication",
-    "lostfound",
-    "trip",
     "vehicle",
+    "feedback",
     #Third Party Apps
     "rest_framework",
     "rest_framework.authtoken",
@@ -76,6 +75,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -149,8 +149,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+# Your static files configuration
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
+
+# WhiteNoise settings look fine, assuming you have 'whitenoise' installed
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')

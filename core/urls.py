@@ -24,9 +24,8 @@ schema_view = get_schema_view( # new
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('auth/',include('authentication.urls')),
-    #path("trip/", include("trip.urls")),
     path("driver/", include("vehicle.urls")),
-    #path("lostfound/", include("lostfound.urls")),
+    path("feedback/", include("feedback.urls")),
     path('swagger/', schema_view.with_ui( # new
     'swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui( # new
