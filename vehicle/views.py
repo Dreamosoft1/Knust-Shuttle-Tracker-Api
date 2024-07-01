@@ -11,6 +11,8 @@ from .serializers import VehicleSerializer, DriverSerializer, DriverCreateSerial
 from .exceptions import ExternalAPIError
 from rest_framework import permissions, status
 from rest_framework.response import Response
+from django.db.models.functions import Cast
+from django.db.models import FloatField
 from django.contrib.auth import authenticate, login, logout
 from .utils import send_otp
 class DriverCreateView(generics.CreateAPIView):
@@ -78,10 +80,23 @@ class DriverDetailView(generics.ListAPIView):
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    
+    
     def get_queryset(self):
-        long = self.kwargs['long']
-        lat = self.kwargs['lat']
-        return Driver.objects.filter(longitude__range=(long-0.1, long+0.1), latitude__range=(lat-0.1, lat+0.1))
+        # Convert string to float
+        long = float(self.kwargs['long'])
+        lat = float(self.kwargs['lat'])
+    
+        # Adjust the queryset to cast string fields to floats
+        queryset = Driver.objects.annotate(
+            longitude_float=Cast('longitude', FloatField()),
+            latitude_float=Cast('latitude', FloatField())
+        ).filter(
+            longitude_float__range=(long-0.1, long+0.1),
+            latitude_float__range=(lat-0.1, lat+0.1)
+        )
+    
+        return queryset
 
 class DriverOtpVerification(generics.CreateAPIView):
     queryset = Driver.objects.all()
