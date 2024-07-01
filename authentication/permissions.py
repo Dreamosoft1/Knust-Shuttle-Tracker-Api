@@ -9,10 +9,3 @@ class IsSuperuserOrReadOnly(BasePermission):
         # Check if the user is a superuser for other methods
         return request.user and request.user.is_superuser
     
-class IsOwnerOrReadOnly(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        # Allow read-only permissions for any request
-        if request.method in ['GET', 'HEAD', 'OPTIONS']:
-            return True
-        # Check if the user is the owner of the object for other methods
-        return obj.user == request.user

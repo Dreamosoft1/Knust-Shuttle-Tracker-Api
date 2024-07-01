@@ -2,7 +2,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from .serializers import *
-from .permissions import IsOwnerOrReadOnly
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import generics, status
 from django.contrib.auth import logout
@@ -81,7 +80,7 @@ class UserListView(generics.ListAPIView):
 class UserUpdateView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserUpdateSerializer
-    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
     lookup_field = 'id'
 
@@ -89,6 +88,9 @@ class UserUpdateView(generics.UpdateAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
+        user = self.request.user
+        if user.id != instance.id:
+            return Response({"message":"You are not authorized to perform this action"}, status=status.HTTP_403_FORBIDDEN)
         self.perform_update(serializer)
         return Response({"data":serializer.data})
 
