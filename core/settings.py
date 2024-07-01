@@ -29,7 +29,7 @@ AUTHENTICATION_BACKENDS = [
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
     'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.TokenSerializer',
-    'USER_DETAILS_SERIALIZER': 'accounts.serializers.FullUserSerializer',
+    'USER_DETAILS_SERIALIZER': 'authentication.serializers.FullUserSerializer',
 }
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -109,11 +109,6 @@ DATABASES = {
     }
 }
 DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -168,6 +163,8 @@ CHANNEL_LAYERS = {
         },
     },
 }
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
