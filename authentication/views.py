@@ -2,7 +2,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from .serializers import *
-from rest_framework.authentication import TokenAuthentication,SessionAuthentication
+from .permissions import IsOwnerOrReadOnly
+from rest_framework.authentication import TokenAuthentication
 from rest_framework import generics, status
 from django.contrib.auth import logout
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -32,7 +33,7 @@ class UserRegistrationView(generics.CreateAPIView):
 
 class UserLogoutView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     def get(self, request, *args, **kwargs):
         logout(request)
         return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
@@ -72,7 +73,7 @@ class UserLoginView(generics.CreateAPIView):
 
 class UserListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     serializer_class = FullUserSerializer
     def get_queryset(self):
         return User.objects.filter(pk=self.request.user.id)
@@ -80,8 +81,8 @@ class UserListView(generics.ListAPIView):
 class UserUpdateView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserUpdateSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    authentication_classes = [TokenAuthentication]
     lookup_field = 'id'
 
     def update(self, request, *args, **kwargs):

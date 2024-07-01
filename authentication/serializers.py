@@ -59,7 +59,23 @@ class FullUserSerializer(serializers.ModelSerializer):
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(source='user_profile')
-    
+
     class Meta:
         model = User
         fields = ['full_name', 'profile']
+
+    def update(self, instance, validated_data):
+        # Update the User instance
+        instance.full_name = validated_data.get('full_name', instance.full_name)
+        instance.save()
+
+        # Update the UserProfile instance
+        profile_data = validated_data.pop('user_profile', None)
+        if profile_data:
+            # Assuming 'user_profile' is a OneToOneField relation to the User model
+            profile = instance.user_profile
+            profile_serializer = UserProfileSerializer(instance=profile, data=profile_data, partial=True)
+            if profile_serializer.is_valid(raise_exception=True):
+                profile_serializer.save()
+
+        return instance

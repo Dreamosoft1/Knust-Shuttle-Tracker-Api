@@ -1,7 +1,7 @@
 from rest_framework import generics
 from .models import Vehicle, Driver
 import random
-from rest_framework.authentication import TokenAuthentication,SessionAuthentication
+from rest_framework.authentication import TokenAuthentication
 import os
 import requests
 from .permissions import IsDriver
@@ -155,7 +155,7 @@ class DriverLoginView(generics.CreateAPIView):
 
 class DriverLogoutView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     def get(self, request, *args, **kwargs):
         logout(request)
         return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
