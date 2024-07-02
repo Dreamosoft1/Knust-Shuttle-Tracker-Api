@@ -92,8 +92,8 @@ class DriverDetailView(generics.ListAPIView):
             longitude_float=Cast('longitude', FloatField()),
             latitude_float=Cast('latitude', FloatField())
         ).filter(
-            longitude_float__range=(long-0.1, long+0.1),
-            latitude_float__range=(lat-0.1, lat+0.1)
+            longitude_float__range=(long-1.1, long+1.1),
+            latitude_float__range=(lat-1.1, lat+1.1)
         )
     
         return queryset
