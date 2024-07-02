@@ -18,7 +18,7 @@ from .utils import send_otp
 class DriverCreateView(generics.CreateAPIView):
     queryset = Driver.objects.all()
     serializer_class = DriverCreateSerializer
-    permission_classes = (permissions.IsAdminUser,)
+    permission_classes = (permissions.AllowAny,)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
