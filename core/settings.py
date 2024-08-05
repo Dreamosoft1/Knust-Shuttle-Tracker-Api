@@ -165,10 +165,11 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         "CONFIG": {
-            "hosts": [os.environ.get('KV_URL', 'redis://localhost:6379')],
+            "hosts": [os.environ.get("REDIS_URL")],
         },
     },
 }
+
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Default primary key field type
