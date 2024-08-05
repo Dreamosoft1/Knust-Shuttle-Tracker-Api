@@ -101,14 +101,20 @@ ASGI_APPLICATION = 'core.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+#DATABASES = dj_database_url.parse(os.environ.get('DATABASE_URL'))
+DATABASES= {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        "URL":os.environ.get("POSTGRES_URL"),
+        "PRISMA_URL":os.environ.get("POSTGRES_PRISMA_URL"),
+        "URL_NON_POOLING":os.environ.get("POSTGRES_URL_NON_POOLING"),
+        "USER":"default",
+        "HOST":os.environ.get("POSTGRES_HOST"),
+        "PASSWORD":os.environ.get("POSTGRES_PASSWORD"),
+        "NAME":os.environ.get("POSTGRES_DATABASE"),
     }
 }
-DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -159,7 +165,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         "CONFIG": {
-            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+            "hosts": [os.environ.get('KV_URL', 'redis://localhost:6379')],
         },
     },
 }
