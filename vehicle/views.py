@@ -1,5 +1,6 @@
 from rest_framework import generics
 from .models import Vehicle, Driver
+from rest_framework.views import APIView as Api
 import random
 from rest_framework.authentication import TokenAuthentication
 import os
@@ -188,3 +189,11 @@ class VehicleUpdateView(generics.UpdateAPIView):
             serializer.save(driver=driver)
         except Driver.DoesNotExist:
             raise ExternalAPIError("You are not authorized to update this vehicle")
+
+class CheckDriverVerification(Api):
+    permission_classes = (permissions.IsAuthenticated,IsDriver,)
+    def get(self, request, *args, **kwargs):
+        driver = Driver.objects.get(user=request.user)
+        if driver.verified:
+            return Response({"message":"Driver is verified"}, status=status.HTTP_200_OK)
+        return Response({"message":"Driver is not verified"}, status=status.HTTP_400_BAD_REQUEST)

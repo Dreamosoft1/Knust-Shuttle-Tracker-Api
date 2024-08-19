@@ -10,4 +10,5 @@ urlpatterns = [
     path('login/', DriverLoginView.as_view(), name="driver-login"),
     path('logout/', DriverLogoutView.as_view(), name="driver-logout"),
     path('get-vehicle-list/', VehicleListView.as_view(), name="get-vehicle"),
+    path('check/', CheckDriverVerification.as_view(), name="check-driver"),
 ]
