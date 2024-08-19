@@ -110,7 +110,7 @@ DATABASES= {
         "PRISMA_URL":os.environ.get("POSTGRES_PRISMA_URL"),
         "URL_NON_POOLING":os.environ.get("POSTGRES_URL_NON_POOLING"),
         "USER":"default",
-        "HOST":os.environ.get("POSTGRES_HOST"),
+        "HOST":"ep-noisy-dew-a4m1fkqx-pooler.us-east-1.aws.neon.tech",
         "PASSWORD":os.environ.get("POSTGRES_PASSWORD"),
         "NAME":os.environ.get("POSTGRES_DATABASE"),
     }
@@ -171,8 +171,8 @@ CHANNEL_LAYERS = {
     },
 }
 
-SECURE_SSL_REDIRECT = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#SECURE_SSL_REDIRECT = True
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
