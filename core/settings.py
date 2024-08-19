@@ -110,7 +110,7 @@ DATABASES= {
         "PRISMA_URL":os.environ.get("POSTGRES_PRISMA_URL"),
         "URL_NON_POOLING":os.environ.get("POSTGRES_URL_NON_POOLING"),
         "USER":"default",
-        "HOST":"ep-noisy-dew-a4m1fkqx-pooler.us-east-1.aws.neon.tech",
+        "HOST":os.environ.get("POSTGRES_HOST"),
         "PASSWORD":os.environ.get("POSTGRES_PASSWORD"),
         "NAME":os.environ.get("POSTGRES_DATABASE"),
     }
