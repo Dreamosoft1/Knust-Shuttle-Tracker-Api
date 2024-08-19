@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     'storages',
     'drf_yasg',
+    'django_rest_passwordreset',
 ]
 
 SITE_ID = 1
