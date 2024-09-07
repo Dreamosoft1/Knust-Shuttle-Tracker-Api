@@ -4,6 +4,7 @@ from .views import *
 urlpatterns = [
     path('create/', DriverCreateView.as_view(), name="create-driver"),
     path('get/<str:long>/<str:lat>/', DriverDetailView.as_view(), name="get-details"),
+    path('get/', DriverdetailViewToken.as_view(), name="get-drivers"),
     path('update-vehicle/<id>/', VehicleUpdateView.as_view(), name="update-car"),
     path('update/<id>/', DriverUpdateView.as_view(), name="update-driver"),
     path('verify/', DriverOtpVerification.as_view(), name="verify-driver"),

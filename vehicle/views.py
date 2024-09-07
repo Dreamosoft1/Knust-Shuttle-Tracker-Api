@@ -134,6 +134,14 @@ class DriverOtpVerification(generics.CreateAPIView):
             print(f"Error: {response.status_code} and {response.json()}")
             return Response({"message": "Code incorrect"}, status=400)
 
+class DriverdetailViewToken(generics.ListAPIView):
+    queryset = Driver.objects.all()
+    serializer_class = DriverSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+    def get_queryset(self):
+        return Driver.objects.filter(user=self.request.user)
+
 class DriverLoginView(generics.CreateAPIView):
     queryset = Driver.objects.all()
     serializer_class = DriverLoginSerializer
