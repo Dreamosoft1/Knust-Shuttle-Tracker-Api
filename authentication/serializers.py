@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(validators=[phone_regex], max_length=17, required=False)
     class Meta:
         model = User
-        fields = ('username', 'full_name', 'email', 'phone_number')
+        fields = ['first_name', 'last_name', 'email', 'username', 'id']
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,7 +59,33 @@ class FullUserSerializer(serializers.ModelSerializer):
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(source='user_profile')
-    
+
     class Meta:
         model = User
         fields = ['full_name', 'profile']
+
+    def update(self, instance, validated_data):
+        # Update the User instance
+        instance.full_name = validated_data.get('full_name', instance.full_name)
+        instance.save()
+
+        # Update the UserProfile instance
+        profile_data = validated_data.pop('user_profile', None)
+        if profile_data:
+            # Assuming 'user_profile' is a OneToOneField relation to the User model
+            profile = instance.user_profile
+            profile_serializer = UserProfileSerializer(instance=profile, data=profile_data, partial=True)
+            if profile_serializer.is_valid(raise_exception=True):
+                profile_serializer.save()
+
+        return instance
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField()
+    new_password = serializers.CharField()
+    confirm_password = serializers.CharField()
+    
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError("Passwords do not match")
+        return data

@@ -32,6 +32,7 @@ class Driver(models.Model):
     image = models.ImageField(upload_to='driver_images', blank=True, null=True)
     latitude = models.CharField(max_length=50, default="0")
     number = models.CharField(max_length=50, blank=True, null=True)
+    verified = models.BooleanField(default=False)
     longitude = models.CharField(max_length=50, default="0")
     driver_id = models.CharField(max_length=50,unique=True, blank=True, null=True)
     def __str__(self):

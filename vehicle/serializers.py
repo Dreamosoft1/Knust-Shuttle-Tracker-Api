@@ -9,16 +9,17 @@ class StopSerializer(serializers.ModelSerializer):
 
 class VehicleSerializer(serializers.ModelSerializer):
     stop = StopSerializer(many=True, read_only=True)
+    start = StopSerializer(many=True,read_only=True)
     class Meta:
         model = Vehicle
         fields = '__all__'
 
 class DriverSerializer(serializers.ModelSerializer):
-    vehicle = VehicleSerializer(read_only=True)
+    vehicle = VehicleSerializer(read_only=True, many=True)
+    user_id = serializers.CharField(source='user.pk', read_only=True)
     class Meta:
         model = Driver
-        fields = ['id','name', 'image', 'number', 'driver_id', 'date_of_birth','gender','vehicle']
-
+        fields = ['id','name', 'image', 'number', 'driver_id', 'date_of_birth','gender','vehicle','user_id']
 
 class DriverCreateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -34,15 +35,15 @@ class DriverCreateSerializer(serializers.ModelSerializer):
         # If you need to handle password, ensure the corresponding User is created or updated
         return driver_instance
 
-
 class DriverUpdateSerializer(serializers.ModelSerializer):
+    user_id = serializers.CharField(source='user.pk', read_only=True)
     class Meta:
         model = Driver
-        fields = ['number', 'image', 'gender', 'date_of_birth','vehicle']
+        fields = ['number', 'image', 'gender', 'date_of_birth','vehicle','user_id']
 
 class DriverOtpVerificationSerializer(serializers.Serializer):
     code = serializers.CharField()
-    user_id = serializers.CharField()
+    driver_id = serializers.CharField()
 
 class DriverLoginSerializer(serializers.Serializer):
     driver_id = serializers.CharField()

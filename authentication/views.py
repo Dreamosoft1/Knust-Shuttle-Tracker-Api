@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from .serializers import *
-from rest_framework.authentication import TokenAuthentication,SessionAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework import generics, status
 from django.contrib.auth import logout
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -32,7 +32,7 @@ class UserRegistrationView(generics.CreateAPIView):
 
 class UserLogoutView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     def get(self, request, *args, **kwargs):
         logout(request)
         return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
@@ -72,7 +72,7 @@ class UserLoginView(generics.CreateAPIView):
 
 class UserListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     serializer_class = FullUserSerializer
     def get_queryset(self):
         return User.objects.filter(pk=self.request.user.id)
@@ -81,15 +81,38 @@ class UserUpdateView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     lookup_field = 'id'
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
+        user = self.request.user
+        if user.id != instance.id:
+            return Response({"message":"You are not authorized to perform this action"}, status=status.HTTP_403_FORBIDDEN)
         self.perform_update(serializer)
         return Response({"data":serializer.data})
 
     def perform_update(self, serializer):
         serializer.save()
+
+class ChangePasswordView(generics.UpdateAPIView):
+    serializer_class = ChangePasswordSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated] 
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if not request.data:  # Check if the request data is empty
+            return Response({'message': 'No data provided in the request.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not user.check_password(serializer.validated_data['old_password']):
+            return Response({'message': 'Old password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
+        user.set_password(serializer.validated_data['new_password'])
+        user.save()
+        return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)

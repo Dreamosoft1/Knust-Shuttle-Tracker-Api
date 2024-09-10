@@ -8,3 +8,4 @@ class IsSuperuserOrReadOnly(BasePermission):
             return True
         # Check if the user is a superuser for other methods
         return request.user and request.user.is_superuser
+    

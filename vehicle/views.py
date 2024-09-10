@@ -1,7 +1,8 @@
 from rest_framework import generics
 from .models import Vehicle, Driver
+from rest_framework.views import APIView as Api
 import random
-from rest_framework.authentication import TokenAuthentication,SessionAuthentication
+from rest_framework.authentication import TokenAuthentication
 import os
 import requests
 from .permissions import IsDriver
@@ -11,12 +12,14 @@ from .serializers import VehicleSerializer, DriverSerializer, DriverCreateSerial
 from .exceptions import ExternalAPIError
 from rest_framework import permissions, status
 from rest_framework.response import Response
+from django.db.models.functions import Cast
+from django.db.models import FloatField
 from django.contrib.auth import authenticate, login, logout
 from .utils import send_otp
 class DriverCreateView(generics.CreateAPIView):
     queryset = Driver.objects.all()
     serializer_class = DriverCreateSerializer
-    permission_classes = (permissions.IsAdminUser,)
+    permission_classes = (permissions.AllowAny,)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -35,7 +38,7 @@ class DriverCreateView(generics.CreateAPIView):
         # Pass the newly created user to perform_create
         self.perform_create(serializer, user=user)
         headers = self.get_success_headers(serializer.data)
-        return Response({"data": serializer.data, "token": token.key}, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({"data": serializer.data, "token": token.key,"user_id":user.pk}, status=status.HTTP_201_CREATED, headers=headers)
     
     def perform_create(self, serializer, user):
         # Save the driver instance with the correct user
@@ -52,14 +55,24 @@ class DriverUpdateView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.driver = Driver.objects.get(id=instance.id)
-        if 'number' in request.data and request.data['number'] != None:
-            message=send_otp(self.driver.name, request.data['number'])
+        # Check and send OTP if 'number' field is present and not empty
+        if 'number' in request.data and request.data['number']:
+            message = send_otp(instance.name, request.data['number'])
+            self.perform_update(serializer)
+            return Response({"data": serializer.data, "message": message})
+       
+        # Handle the many-to-many relationship for the 'vehicle' field
+        if 'vehicle' in request.data:
+            vehicle_ids = request.data.get('vehicle')
+            vehicles = Vehicle.objects.filter(id__in=vehicle_ids)
+            instance.vehicle.set(vehicles)
+    
         self.perform_update(serializer)
-        return Response({"data":serializer.data,"message":message})
+        return Response(serializer.data)
     
     def perform_update(self, serializer):
         try:
-            driver = Driver.objects.get(user=self.request.user, id=self.driver.id)
+            driver = Driver.objects.get(user=self.request.user, id=self.kwargs['id'])
             serializer.save(driver=driver)
         except Driver.DoesNotExist:
             raise ExternalAPIError("You are not authorized to update this driver")
@@ -68,10 +81,23 @@ class DriverDetailView(generics.ListAPIView):
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    
+    
     def get_queryset(self):
-        long = self.kwargs['long']
-        lat = self.kwargs['lat']
-        return Driver.objects.filter(longitude__range=(long-0.1, long+0.1), latitude__range=(lat-0.1, lat+0.1))
+        # Convert string to float
+        long = float(self.kwargs['long'])
+        lat = float(self.kwargs['lat'])
+    
+        # Adjust the queryset to cast string fields to floats
+        queryset = Driver.objects.annotate(
+            longitude_float=Cast('longitude', FloatField()),
+            latitude_float=Cast('latitude', FloatField())
+        ).filter(
+            longitude_float__range=(long-1.1, long+1.1),
+            latitude_float__range=(lat-1.1, lat+1.1)
+        )
+    
+        return queryset
 
 class DriverOtpVerification(generics.CreateAPIView):
     queryset = Driver.objects.all()
@@ -83,8 +109,8 @@ class DriverOtpVerification(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         
         code = serializer.validated_data.get('code')
-        user_id = serializer.validated_data.get('driver_id')
-        phone = Driver.objects.get(pk=user_id).number
+        driver_id = serializer.validated_data.get('driver_id')
+        phone = Driver.objects.get(driver_id=driver_id).number
         data = {
             "code": code,
             "number": phone,
@@ -108,6 +134,14 @@ class DriverOtpVerification(generics.CreateAPIView):
             print(f"Error: {response.status_code} and {response.json()}")
             return Response({"message": "Code incorrect"}, status=400)
 
+class DriverdetailViewToken(generics.ListAPIView):
+    queryset = Driver.objects.all()
+    serializer_class = DriverSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+    def get_queryset(self):
+        return Driver.objects.filter(user=self.request.user)
+
 class DriverLoginView(generics.CreateAPIView):
     queryset = Driver.objects.all()
     serializer_class = DriverLoginSerializer
@@ -124,13 +158,13 @@ class DriverLoginView(generics.CreateAPIView):
                 return Response({"message":"Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
             login(request, ur)
             token, _ = Token.objects.get_or_create(user=driver.user)
-            return Response({"data":serializer.data,"token":token.key}, status=status.HTTP_200_OK)
+            return Response({"data":serializer.data,"token":token.key,"id":driver.pk,"user_id":user.pk}, status=status.HTTP_200_OK)
         except Driver.DoesNotExist:
             return Response({"message":"Driver not found"}, status=status.HTTP_404_NOT_FOUND)
 
 class DriverLogoutView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     def get(self, request, *args, **kwargs):
         logout(request)
         return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
@@ -163,3 +197,11 @@ class VehicleUpdateView(generics.UpdateAPIView):
             serializer.save(driver=driver)
         except Driver.DoesNotExist:
             raise ExternalAPIError("You are not authorized to update this vehicle")
+
+class CheckDriverVerification(Api):
+    permission_classes = (permissions.IsAuthenticated,IsDriver,)
+    def get(self, request, *args, **kwargs):
+        driver = Driver.objects.get(user=request.user)
+        if driver.verified:
+            return Response({"message":"Driver is verified"}, status=status.HTTP_200_OK)
+        return Response({"message":"Driver is not verified"}, status=status.HTTP_400_BAD_REQUEST)
