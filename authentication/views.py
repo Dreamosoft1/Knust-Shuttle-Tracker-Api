@@ -149,16 +149,4 @@ class ForgotPasswordView(CreateAPIView):
         data = serializer.save()
         return Response(data, status=status.HTTP_200_OK)
 
-class ForgotPasswordView(CreateAPIView):
-    serializer_class = ForgotPasswordSerializer
-    permission_classes = [AllowAny]
-
-    @swagger_auto_schema(
-        operation_description="Send reset code to the user's email",
-        responses={200: forget_password_schema},
-    )
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        data = serializer.save()
-        return Response(data, status=status.HTTP_200_OK)    
+   
