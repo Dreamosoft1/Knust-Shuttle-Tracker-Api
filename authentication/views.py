@@ -6,6 +6,22 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework import generics, status
 from django.contrib.auth import logout
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.generics import CreateAPIView
+
+
+response_schema = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "message": openapi.Schema(type=openapi.TYPE_STRING),
+    },
+)
+
+forget_password_schema = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={"token": openapi.Schema(type=openapi.TYPE_STRING)},
+)
 
 @api_view(["GET"])
 def get_user_token(request):
@@ -97,6 +113,8 @@ class UserUpdateView(generics.UpdateAPIView):
     def perform_update(self, serializer):
         serializer.save()
 
+
+
 class ChangePasswordView(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     authentication_classes = [TokenAuthentication]
@@ -116,3 +134,31 @@ class ChangePasswordView(generics.UpdateAPIView):
         user.set_password(serializer.validated_data['new_password'])
         user.save()
         return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)
+    
+class ForgotPasswordView(CreateAPIView):
+    serializer_class = ForgotPasswordSerializer
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(
+        operation_description="Send reset code to the user's email",
+        responses={200: forget_password_schema},
+    )
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.save()
+        return Response(data, status=status.HTTP_200_OK)
+
+class ForgotPasswordView(CreateAPIView):
+    serializer_class = ForgotPasswordSerializer
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(
+        operation_description="Send reset code to the user's email",
+        responses={200: forget_password_schema},
+    )
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.save()
+        return Response(data, status=status.HTTP_200_OK)    

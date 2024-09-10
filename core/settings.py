@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     'storages',
     'drf_yasg',
-    'django_rest_passwordreset',
+    #'django_rest_passwordreset',
 ]
 
 SITE_ID = 1
@@ -103,18 +103,31 @@ ASGI_APPLICATION = 'core.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 #DATABASES = dj_database_url.parse(os.environ.get('DATABASE_URL'))
-DATABASES= {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        "URL":os.environ.get("POSTGRES_URL"),
-        "PRISMA_URL":os.environ.get("POSTGRES_PRISMA_URL"),
-        "URL_NON_POOLING":os.environ.get("POSTGRES_URL_NON_POOLING"),
-        "USER":"default",
-        "HOST":os.environ.get("POSTGRES_HOST"),
-        "PASSWORD":os.environ.get("POSTGRES_PASSWORD"),
-        "NAME":os.environ.get("POSTGRES_DATABASE"),
+
+if os.environ.get("POSTGRES_URL") and os.environ.get("POSTGRES_HOST") and os.environ.get("POSTGRES_PASSWORD") and os.environ.get("POSTGRES_DATABASE"):
+    DATABASES= {
+        'default': {
+            
+            'ENGINE': 'django.db.backends.postgresql',
+            "URL":os.environ.get("POSTGRES_URL"),
+            "PRISMA_URL":os.environ.get("POSTGRES_PRISMA_URL"),
+            "URL_NON_POOLING":os.environ.get("POSTGRES_URL_NON_POOLING"),
+            "USER":"default",
+            "HOST":os.environ.get("POSTGRES_HOST"),
+            "PASSWORD":os.environ.get("POSTGRES_PASSWORD"),
+            "NAME":os.environ.get("POSTGRES_DATABASE"),
+        }
     }
-}
+else:
+    # Fallback to SQLite if any of the required PostgreSQL environment variables is not set
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),  # Path to the SQLite database file
+        }
+    }
+
+DATABASES['default']['ATOMIC_REQUESTS'] = True    
 
 
 # Password validation
